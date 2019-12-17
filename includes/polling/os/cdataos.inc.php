@@ -24,18 +24,17 @@
  */
 
 if (strpos($device['sysObjectID'], '.1.3.6.1.4.1.17409') !== false) { // FD12xx series
-  $hardware = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.2.1.1.3.1', '-OQv'), '"');
-  $version = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.3.1.1.8.1.0', '-OQv'), '"');
-  $serial = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.3.1.1.12.1.0', '-OQv'), '"');
+    $hardware = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.2.1.1.3.1', '-OQv'), '"');
+    $version = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.3.1.1.8.1.0', '-OQv'), '"');
+    $serial = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.3.1.1.12.1.0', '-OQv'), '"');
 
-  $hardware = "FD12xx " . $hardware;
+    $hardware = "FD12xx " . $hardware;
 }
 
 
 if (strpos($device['sysObjectID'], '.1.3.6.1.4.1.34592') !== false) { // FD11xx series
-  #$hardware = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.2.1.1.3.1', '-OQv'), '"');
-  $version = trim(snmp_get($device, '.1.3.6.1.4.1.34592.1.3.1.5.1.3.0', '-OQv'), '"') . " " . trim(snmp_get($device, '.1.3.6.1.4.1.34592.1.3.1.5.1.4.0', '-OQv'), '"') ;
-  #$serial = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.3.1.1.12.1.0', '-OQv'), '"');
-  $hardware = "FD11xx ";
+    #$hardware = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.2.1.1.3.1', '-OQv'), '"');
+    $version = trim(snmp_get($device, '.1.3.6.1.4.1.34592.1.3.1.5.1.3.0', '-OQv'), '"') . " " . trim(snmp_get($device, '.1.3.6.1.4.1.34592.1.3.1.5.1.4.0', '-OQv'), '"') ;
+    #$serial = trim(snmp_get($device, '.1.3.6.1.4.1.17409.2.3.1.3.1.1.12.1.0', '-OQv'), '"');
+    $hardware = "FD11xx ";
 }
-
