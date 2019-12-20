@@ -3,6 +3,8 @@ text: 'SNR NAG LLC'
 type: network
 icon: snr
 group: snr
+mib_dir:
+    - snr
 over:
     - { graph: device_bits, text: 'Device Traffic' }
 discovery:
