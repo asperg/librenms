@@ -6,3 +6,13 @@ modules:
                   oid: switchCpuUsage
                   num_oid: '.1.3.6.1.4.1.6339.100.1.11.10.{{ $index }}'
                   descr: CPU Usage
+    sensors:
+        dbm:
+            data:
+                -
+                    oid: ddmTranscDiagnosisTable
+                    value: ddmDiagnosisRXPower
+                    num_oid: '.1.3.6.1.4.1.6339.100.30.1.1.17.{{ $index }}'
+                    descr: 'Ethernet1/0/{{ $index }} Rx'
+                    low_limit: ddmDiagRXPowerLowAlarmThreshold
+                    high_limit: ddmDiagRXPowerHighAlarmThreshold
