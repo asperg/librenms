@@ -10,7 +10,7 @@ OUT=/tmp/cronic.out.$$
 ERR=/tmp/cronic.err.$$
 TRACE=/tmp/cronic.trace.$$
 
-if ps -axf | grep poller-wrapper | grep -v grep > /dev/null 2>&1; then 
+if pgrep poller-wrapper > /dev/null 2>&1; then
     echo "alredy started, exit" >> $ERR
     exit;
 fi
