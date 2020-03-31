@@ -10,11 +10,13 @@ OUT=/tmp/cronic.out.$$
 ERR=/tmp/cronic.err.$$
 TRACE=/tmp/cronic.trace.$$
 
-if pgrep -f poller-wrapper > /dev/null 2>&1; then
+cc=$(pgrep -f poller-wrapper | wc -l)
+
+if [ "$cc" -gt "1" ]; then
+    echo "$cc"
     echo "alredy started, exit" >> $ERR
     exit;
 fi
-
 
 set +e
 "$@" >$OUT 2>$TRACE
