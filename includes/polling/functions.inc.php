@@ -9,6 +9,7 @@ use LibreNMS\Exceptions\JsonAppBlankJsonException;
 use LibreNMS\Exceptions\JsonAppMissingKeysException;
 use LibreNMS\Exceptions\JsonAppWrongVersionException;
 use LibreNMS\Exceptions\JsonAppExtendErroredException;
+use App\Models\Location;
 
 function bulk_sensor_snmpget($device, $sensors)
 {
@@ -243,11 +244,20 @@ function poll_device($device, $force_module = false)
     echo 'Hostname:    ' . $device['hostname'] . PHP_EOL;
     echo 'Device ID:   ' . $device['device_id'] . PHP_EOL;
     echo 'OS:          ' . $device['os'] . PHP_EOL;
-    $ip = dnslookup($device);
+
+    if (empty($device['overwrite_ip'])) {
+        $ip = dnslookup($device);
+    } else {
+        $ip = $device['overwrite_ip'];
+    }
 
     $db_ip = null;
     if (!empty($ip)) {
-        echo 'Resolved IP: '.$ip.PHP_EOL;
+        if (empty($device['overwrite_ip'])) {
+            echo 'Resolved IP: '.$ip.PHP_EOL;
+        } else {
+            echo 'Assigned IP: '.$ip.PHP_EOL;
+        }
         $db_ip = inet_pton($ip);
     }
 
@@ -772,4 +782,42 @@ function data_flatten($array, $prefix = '', $joiner = '_')
     }
 
     return $return;
+}
+
+/**
+ * @param string $sysLocation location override (instead of sysLocation.0)
+ * @param &$device
+ * @param &$update_array
+ */
+function set_device_location($sysLocation, &$device, &$update_array)
+{
+    $sysLocation = str_replace('"', '', $sysLocation);
+
+    // Rewrite sysLocation if there is a mapping array (database too?)
+    if (!empty($sysLocation) && (is_array(Config::get('location_map')) || is_array(Config::get('location_map_regex')) || is_array(Config::get('location_map_regex_sub')))) {
+        $sysLocation = rewrite_location($sysLocation);
+    }
+
+    if ($sysLocation == 'not set') {
+        $sysLocation = '';
+    }
+
+    if ($device['override_sysLocation'] == 0 && $sysLocation) {
+        /** @var Location $location */
+        $location = Location::firstOrCreate(['location' => $sysLocation]);
+
+        if ($device['location_id'] != $location->id) {
+            $device['location_id'] = $location->id;
+            $update_array['location_id'] = $location->id;
+            log_event('Location -> ' . $location->location, $device, 'system', 3);
+        }
+    }
+
+    // make sure the location has coordinates
+    if (Config::get('geoloc.latlng', true) && ($location || $location = Location::find($device['location_id']))) {
+        if (!$location->hasCoordinates()) {
+            $location->lookupCoordinates();
+            $location->save();
+        }
+    }
 }

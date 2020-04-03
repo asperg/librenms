@@ -103,6 +103,31 @@ class Device extends BaseModel
         return static::where('hostname', $hostname)->first();
     }
 
+    /**
+     * Returns IP/Hostname where polling will be targeted to
+     *
+     * @param string $device hostname which will be triggered
+     *        array  $device associative array with device data
+     * @return string IP/Hostname to which Device polling is targeted
+     */
+    public static function pollerTarget($device)
+    {
+        if (! is_array($device)) {
+            $ret = static::where('hostname', $device)->first(['hostname', 'overwrite_ip']);
+            if (empty($ret)) {
+                return $device;
+            }
+            $overwrite_ip = $ret->overwrite_ip;
+            $hostname = $ret->hostname;
+        } elseif (array_key_exists('overwrite_ip', $device)) {
+            $overwrite_ip = $device['overwrite_ip'];
+            $hostname = $device['hostname'];
+        } else {
+            return $device['hostname'];
+        }
+        return $overwrite_ip ?: $hostname;
+    }
+
     public static function findByIp($ip)
     {
         if (!IP::isValid($ip)) {
@@ -187,6 +212,13 @@ class Device extends BaseModel
                     $query->orWhere(function ($query) {
                         $query->where('alert_schedulable_type', 'device_group')
                             ->whereIn('alert_schedulable_id', $this->groups->pluck('id'));
+                    });
+                }
+
+                if ($this->location) {
+                    $query->orWhere(function ($query) {
+                        $query->where('alert_schedulable_type', 'location')
+                            ->where('alert_schedulable_id', $this->location->id);
                     });
                 }
             });
@@ -401,8 +433,11 @@ class Device extends BaseModel
         });
 
         if ($attrib_index !== false) {
+            $deleted=(bool)$this->attribs->get($attrib_index)->delete();
+            // only forget the attrib_index after delete, otherwise delete() will fail fatally with:
+            // Symfony\\Component\\Debug\Exception\\FatalThrowableError(code: 0):  Call to a member function delete() on null
             $this->attribs->forget($attrib_index);
-            return (bool)$this->attribs->get($attrib_index)->delete();
+            return $deleted;
         }
 
         return false;
@@ -447,6 +482,7 @@ class Device extends BaseModel
         return $query->where([
             ['status', '=', 1],
             ['ignore', '=', 0],
+            ['disable_notify', '=', 0],
             ['disabled', '=', 0]
         ]);
     }
@@ -463,6 +499,7 @@ class Device extends BaseModel
     {
         return $query->where([
             ['status', '=', 0],
+            ['disable_notify', '=', 0],
             ['ignore', '=', 0],
             ['disabled', '=', 0]
         ]);
@@ -487,6 +524,29 @@ class Device extends BaseModel
     {
         return $query->where([
             ['disabled', '=', 1]
+        ]);
+    }
+
+    public function scopeIsDisableNotify($query)
+    {
+        return $query->where([
+            ['disable_notify', '=', 1]
+        ]);
+    }
+
+    public function scopeIsNotDisabled($query)
+    {
+        return $query->where([
+            ['disable_notify', '=', 0],
+            ['disabled', '=', 0]
+        ]);
+    }
+
+    public function scopeWhereUptime($query, $uptime, $modifier = '<')
+    {
+        return $query->where([
+            ['uptime', '>', 0],
+            ['uptime', $modifier, $uptime]
         ]);
     }
 
@@ -698,6 +758,11 @@ class Device extends BaseModel
     {
         // FIXME does not include global read
         return $this->belongsToMany('App\Models\User', 'devices_perms', 'device_id', 'user_id');
+    }
+
+    public function vminfo()
+    {
+        return $this->hasMany('App\Models\Vminfo', 'device_id');
     }
 
     public function vrfLites()

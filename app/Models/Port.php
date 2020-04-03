@@ -137,7 +137,7 @@ class Port extends DeviceRelatedModel
             ['deleted', '=', 0],
             ['ignore', '=', 0],
             ['disabled', '=', 0],
-            ['ifOperStatus', '=', 'down'],
+            ['ifOperStatus', '!=', 'up'],
             ['ifAdminStatus', '=', 'up'],
         ]);
     }
@@ -195,6 +195,18 @@ class Port extends DeviceRelatedModel
             $query->where('ifInErrors_delta', '>', 0)
                 ->orWhere('ifOutErrors_delta', '>', 0);
         });
+    }
+
+    /**
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeIsValid($query)
+    {
+        return $query->where([
+            ['deleted', '=', 0],
+            ['disabled', '=', 0],
+        ]);
     }
 
     public function scopeHasAccess($query, User $user)
