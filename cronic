@@ -12,7 +12,7 @@ TRACE=/tmp/cronic.trace.$$
 
 cc=$(pgrep -f poller-wrapper | wc -l)
 
-if [ "$cc" -gt "3" ]; then
+if [ "$cc" -gt "5" ]; then
     echo "$cc"
     echo "alredy started, exit" >> $ERR
     exit;
