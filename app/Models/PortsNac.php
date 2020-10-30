@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -53,6 +52,6 @@ class PortsNac extends PortRelatedModel
 
     public function device()
     {
-        return $this->belongsTo('App\Models\Device', 'device_id', 'device_id');
+        return $this->belongsTo(\App\Models\Device::class, 'device_id', 'device_id');
     }
 }

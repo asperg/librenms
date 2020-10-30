@@ -26,15 +26,11 @@
 namespace LibreNMS\Tests\Feature\SnmpTraps;
 
 use App\Models\Device;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use LibreNMS\Snmptrap\Dispatcher;
 use LibreNMS\Snmptrap\Trap;
-use LibreNMS\Tests\DBTestCase;
 
-class FgTrapLogRateThresholdTest extends DBTestCase
+class FmTrapLogRateThresholdTest extends SnmpTrapTestCase
 {
-    use DatabaseTransactions;
-
     public function testAvOversize()
     {
         $device = factory(Device::class)->create();
@@ -48,7 +44,7 @@ SNMPv2-MIB::sysName.0 $device->hostname
 FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogRate.0 315
 FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogRateThreshold.0 260";
 
-        $message = "Recommended log rate exceeded. Current Rate: 315 Recommended Rate: 260";
+        $message = 'Recommended log rate exceeded. Current Rate: 315 Recommended Rate: 260';
         \Log::shouldReceive('event')->once()->with($message, $device->device_id, 'trap', 3);
 
         $trap = new Trap($trapText);

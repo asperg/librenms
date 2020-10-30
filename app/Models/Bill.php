@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -40,7 +39,7 @@ class Bill extends Model
             return $query;
         }
 
-        return $query->join('bill_perms', 'bill_perms.bill_id', "bills.bill_id")
+        return $query->join('bill_perms', 'bill_perms.bill_id', 'bills.bill_id')
             ->where('bill_perms.user_id', $user->user_id);
     }
 
@@ -48,6 +47,6 @@ class Bill extends Model
 
     public function ports()
     {
-        return $this->belongsToMany('App\Models\Port', 'bill_ports', 'bill_id', 'bill_id');
+        return $this->belongsToMany(\App\Models\Port::class, 'bill_ports', 'bill_id', 'bill_id');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * AdvaDyingGaspTest.php
+ * AdvaDyingGaspTrapTest.php
  *
  * -Description-
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2019 Heath Barnhart
  * @author     Heath Barnhart <hbarnhart@kanren.net>
@@ -29,7 +28,7 @@ use App\Models\Device;
 use LibreNMS\Snmptrap\Dispatcher;
 use LibreNMS\Snmptrap\Trap;
 
-class AdvaSnmpDyingGaspTest extends SnmpTrapTestCase
+class AdvaDyingGaspTrapTest extends SnmpTrapTestCase
 {
     public function testDyingGasp()
     {
@@ -42,7 +41,7 @@ SNMPv2-MIB::snmpTrapOID.0 CM-SYSTEM-MIB::cmSnmpDyingGaspTrap";
 
         $trap = new Trap($trapText);
 
-        $message = "Dying Gasp received";
+        $message = 'Dying Gasp received';
         \Log::shouldReceive('event')->once()->with($message, $device->device_id, 'trap', 5);
 
         $this->assertTrue(Dispatcher::handle($trap), 'Could not handle cmSnmpDyingGaspTrap');

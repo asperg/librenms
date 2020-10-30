@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -55,6 +54,7 @@ class TopInterfacesController extends WidgetController
             ->select('port_id', 'device_id', 'ifName', 'ifDescr', 'ifAlias')
             ->groupBy('port_id', 'device_id', 'ifName', 'ifDescr', 'ifAlias')
             ->where('poll_time', '>', Carbon::now()->subMinutes($data['time_interval'])->timestamp)
+            ->isUp()
             ->when($data['device_group'], function ($query) use ($data) {
                 $query->inDeviceGroup($data['device_group']);
             }, function ($query) {
@@ -71,7 +71,6 @@ class TopInterfacesController extends WidgetController
 
         return view('widgets.top-interfaces', $data);
     }
-
 
     public function getSettingsView(Request $request)
     {

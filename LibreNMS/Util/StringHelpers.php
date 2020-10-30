@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -37,7 +36,7 @@ class StringHelpers
     public static function shortenText($string, $max = 30)
     {
         if (strlen($string) > 50) {
-            return substr($string, 0, $max) . "...";
+            return substr($string, 0, $max) . '...';
         }
 
         return $string;
@@ -46,36 +45,37 @@ class StringHelpers
     public static function niceCase($string)
     {
         $replacements = [
-            'dbm' => 'dBm',
-            'entropy' => 'Random entropy',
-            'mysql' => 'MySQL',
-            'powerdns' => 'PowerDNS',
             'bind' => 'BIND',
-            'nfs-stats' => 'NFS Stats',
-            'nfs-v3-stats' => 'NFS v3 Stats',
-            'nfs-server' => 'NFS Server',
-            'ntp' => 'NTP',
-            'ntp-client' => 'NTP Client',
-            'ntp-server' => 'NTP Server',
-            'os-updates' => 'OS Updates',
-            'smart' => 'SMART',
-            'powerdns-recursor' => 'PowerDNS Recursor',
-            'powerdns-dnsdist' => 'PowerDNS dnsdist',
-            'pureftpd' => 'PureFTPd',
+            'dbm' => 'dBm',
             'dhcp-stats' => 'DHCP Stats',
-            'ups-nut' => 'UPS nut',
-            'ups-apcups' => 'UPS apcups',
-            'gpsd' => 'GPSD',
+            'entropy' => 'Random entropy',
             'exim-stats' => 'EXIM Stats',
             'fbsd-nfs-client' => 'FreeBSD NFS Client',
             'fbsd-nfs-server' => 'FreeBSD NFS Server',
-            'php-fpm' => 'PHP-FPM',
-            'opengridscheduler' => 'Open Grid Scheduler',
-            'sdfsinfo' => 'SDFS info',
             'freeradius' => 'FreeRADIUS',
-            'pi-hole' => 'pi-hole',
-            'zfs' => 'ZFS',
+            'gpsd' => 'GPSD',
             'mailcow-postfix' => 'mailcow-dockerized postfix',
+            'mysql' => 'MySQL',
+            'nfs-server' => 'NFS Server',
+            'nfs-stats' => 'NFS Stats',
+            'nfs-v3-stats' => 'NFS v3 Stats',
+            'ntp' => 'NTP',
+            'ntp-client' => 'NTP Client',
+            'ntp-server' => 'NTP Server',
+            'opengridscheduler' => 'Open Grid Scheduler',
+            'os-updates' => 'OS Updates',
+            'php-fpm' => 'PHP-FPM',
+            'pi-hole' => 'pi-hole',
+            'powerdns' => 'PowerDNS',
+            'powerdns-dnsdist' => 'PowerDNS dnsdist',
+            'powerdns-recursor' => 'PowerDNS Recursor',
+            'pureftpd' => 'PureFTPd',
+            'rrdcached' => 'RRDCached',
+            'sdfsinfo' => 'SDFS info',
+            'smart' => 'SMART',
+            'ups-apcups' => 'UPS apcups',
+            'ups-nut' => 'UPS nut',
+            'zfs' => 'ZFS',
         ];
 
         return isset($replacements[$string]) ? $replacements[$string] : ucwords(str_replace(['_', '-'], ' ', $string));

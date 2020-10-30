@@ -26,13 +26,13 @@
                     "sysDescr": "E7-2",
                     "sysContact": null,
                     "version": null,
-                    "hardware": null,
-                    "features": null,
+                    "hardware": "Calix E7-2",
+                    "features": "",
                     "os": "exa",
                     "type": "network",
                     "serial": null,
                     "icon": "calix.svg",
-                    "location": null
+                    "location": "<private>"
                 }
             ]
         },
@@ -45,7 +45,7 @@
                     "sysContact": "<private>",
                     "version": null,
                     "hardware": "Calix E7-2",
-                    "features": null,
+                    "features": "",
                     "os": "exa",
                     "type": "network",
                     "serial": null,

@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -27,6 +26,7 @@ namespace App\Http\ViewComposers;
 
 use App\Models\AlertRule;
 use App\Models\BgpPeer;
+use App\Models\Dashboard;
 use App\Models\Device;
 use App\Models\DeviceGroup;
 use App\Models\Location;
@@ -56,11 +56,18 @@ class MenuComposer
         $user = Auth::user();
         $site_style = Config::get('applied_site_style');
 
+        //global Settings
+        $vars['hide_dashboard_editor'] = UserPref::getPref($user, 'hide_dashboard_editor');
+        // end global Settings
+
         //TODO: should be handled via CSS Themes
-        $vars['navbar'] = in_array($site_style, ['mono', 'dark']) ? 'navbar-inverse' : '';
+        $vars['navbar'] = in_array($site_style, ['mono']) ? 'navbar-inverse' : '';
 
         $vars['project_name'] = Config::get('project_name', 'LibreNMS');
         $vars['title_image'] = Config::get('title_image', "images/librenms_logo_$site_style.svg");
+
+        //Dashboards
+        $vars['dashboards'] = Dashboard::select('dashboard_id', 'dashboard_name')->allAvailable($user)->orderBy('dashboard_name')->get();
 
         // Device menu
         $vars['device_groups'] = DeviceGroup::hasAccess($user)->orderBy('name')->get(['device_groups.id', 'name', 'desc']);
@@ -101,6 +108,7 @@ class MenuComposer
             ->get(['sensor_class'])
             ->sortBy(function ($wireless_sensor) use ($wireless_menu_order) {
                 $pos = array_search($wireless_sensor->sensor_class, $wireless_menu_order);
+
                 return $pos === false ? 100 : $pos; // unknown at bottom
             });
 
@@ -119,7 +127,7 @@ class MenuComposer
                         'url' => 'vrf',
                         'icon' => 'arrows',
                         'text' => 'VRFs',
-                    ]
+                    ],
                 ];
             }
 
@@ -129,7 +137,7 @@ class MenuComposer
                         'url' => 'mpls',
                         'icon' => 'tag',
                         'text' => 'MPLS',
-                    ]
+                    ],
                 ];
             }
 
@@ -139,7 +147,7 @@ class MenuComposer
                         'url' => 'ospf',
                         'icon' => 'circle-o-notch fa-rotate-180',
                         'text' => 'OSPF Devices',
-                    ]
+                    ],
                 ];
             }
 
@@ -149,7 +157,7 @@ class MenuComposer
                         'url' => 'cisco-otv',
                         'icon' => 'exchange',
                         'text' => 'Cisco OTV',
-                    ]
+                    ],
                 ];
             }
 
@@ -184,7 +192,7 @@ class MenuComposer
                         'url' => 'cef',
                         'icon' => 'exchange',
                         'text' => 'Cisco CEF',
-                    ]
+                    ],
                 ];
             }
         }
@@ -213,6 +221,9 @@ class MenuComposer
             ->orWhere(function ($query) use ($user) {
                 $query->isUnread($user);
             })->count();
+
+        // Poller Settings
+        $vars['poller_clusters'] = \App\Models\PollerCluster::exists();
 
         // Search bar
         $vars['typeahead_limit'] = Config::get('webui.global_search_result_limit');

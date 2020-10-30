@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -36,6 +35,6 @@ class Ipv6Network extends Model
 
     public function ipv6()
     {
-        return $this->hasMany('App\Models\Ipv6Address', 'ipv6_network_id');
+        return $this->hasMany(\App\Models\Ipv6Address::class, 'ipv6_network_id');
     }
 }

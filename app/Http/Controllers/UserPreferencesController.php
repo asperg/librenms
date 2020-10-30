@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2019 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -73,7 +72,7 @@ class UserPreferencesController extends Controller
             'site_style' => UserPref::getPref($user, 'site_style'),
             'site_style_default' => $styles[$default_style] ?? $default_style,
             'site_styles' => $styles,
-
+            'hide_dashboard_editor' => UserPref::getPref($user, 'hide_dashboard_editor') ?? 0,
         ];
 
         if (Config::get('twofactor')) {
@@ -84,7 +83,7 @@ class UserPreferencesController extends Controller
             $data['twofactor'] = $twofactor;
         }
 
-        if (!$user->hasGlobalRead()) {
+        if (! $user->hasGlobalRead()) {
             $data['devices'] = Device::hasAccess($user)->get();
         }
 
@@ -110,6 +109,7 @@ class UserPreferencesController extends Controller
                 'required',
                 Rule::in(array_merge(['default'], array_keys($this->getValidStyles()))),
             ],
+            'hide_dashboard_editor' => 'required|integer',
         ];
 
         $this->validate($request, [
@@ -125,18 +125,18 @@ class UserPreferencesController extends Controller
     private function getValidLocales()
     {
         return array_reduce(glob(resource_path('lang') . '/*', GLOB_ONLYDIR), function ($locales, $locale) {
-            {
-                $locale = basename($locale);
-                $lang = __('preferences.lang', [], $locale);
-                $locales[$locale] = ($lang == 'preferences.lang' ? $locale : $lang);
-                return $locales;
-            }
+            $locale = basename($locale);
+            $lang = __('preferences.lang', [], $locale);
+            $locales[$locale] = ($lang == 'preferences.lang' ? $locale : $lang);
+
+            return $locales;
         }, []);
     }
 
     private function getValidStyles()
     {
         $definitions = new DynamicConfig();
+
         return $definitions->get('site_style')->getOptions();
     }
 

@@ -19,7 +19,10 @@
                     "bgpPeerInUpdateElapsedTime": 0,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 },
                 {
                     "astext": "",
@@ -38,7 +41,10 @@
                     "bgpPeerInUpdateElapsedTime": 0,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 },
                 {
                     "astext": "",
@@ -57,7 +63,10 @@
                     "bgpPeerInUpdateElapsedTime": 0,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 },
                 {
                     "astext": "",
@@ -76,7 +85,10 @@
                     "bgpPeerInUpdateElapsedTime": 0,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 }
             ],
             "bgpPeers_cbgp": [
@@ -197,7 +209,10 @@
                     "bgpPeerInUpdateElapsedTime": 8491,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 },
                 {
                     "astext": "",
@@ -216,7 +231,10 @@
                     "bgpPeerInUpdateElapsedTime": 8491,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 },
                 {
                     "astext": "",
@@ -235,7 +253,10 @@
                     "bgpPeerInUpdateElapsedTime": 8486,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 },
                 {
                     "astext": "",
@@ -254,7 +275,10 @@
                     "bgpPeerInUpdateElapsedTime": 8486,
                     "context_name": "",
                     "bgpLocalAs": 65031,
-                    "vrfLocalAs": null
+                    "vrfLocalAs": null,
+                    "bgpPeerLastErrorCode": null,
+                    "bgpPeerLastErrorSubCode": null,
+                    "bgpPeerLastErrorText": null
                 }
             ],
             "bgpPeers_cbgp": [
@@ -365,14 +389,14 @@
                     "sysObjectID": ".1.3.6.1.4.1.9.1.1116",
                     "sysDescr": "Cisco IOS Software, ASR1000 Software (PPC_LINUX_IOSD-ADVENTERPRISEK9-M), Version 15.5(3)S1a, RELEASE SOFTWARE (fc1)\nTechnical Support: http://www.cisco.com/techsupport\r\nCopyright (c) 1986-2015 by Cisco Systems, Inc.\r\nCompiled Wed 04-Nov-15 17:40 by mcpre",
                     "sysContact": null,
-                    "version": null,
-                    "hardware": null,
-                    "features": null,
+                    "version": "15.5(3)S1a",
+                    "hardware": "ciscoASR1002F",
+                    "features": "ADVENTERPRISEK9",
                     "os": "iosxe",
                     "type": "network",
                     "serial": null,
                     "icon": "cisco.svg",
-                    "location": null
+                    "location": "<private>"
                 }
             ]
         },

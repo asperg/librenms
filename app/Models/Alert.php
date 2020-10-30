@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2016 Neil Lathwood
  * @author     Neil Lathwood <neil@lathwood.co.uk>
@@ -27,6 +26,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use LibreNMS\Enum\AlertState;
 
 class Alert extends Model
 {
@@ -41,7 +41,7 @@ class Alert extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('state', '=', '1');
+        return $query->where('state', '=', AlertState::ACTIVE);
     }
 
     /**
@@ -51,23 +51,23 @@ class Alert extends Model
      */
     public function scopeAcknowledged($query)
     {
-        return $query->where('state', '=', '2');
+        return $query->where('state', '=', AlertState::ACKNOWLEDGED);
     }
 
     // ---- Define Relationships ----
 
     public function device()
     {
-        return $this->belongsTo('App\Models\Device', 'device_id');
+        return $this->belongsTo(\App\Models\Device::class, 'device_id');
     }
 
     public function rule()
     {
-        return $this->belongsTo('App\Models\AlertRule', 'rule_id', 'id');
+        return $this->belongsTo(\App\Models\AlertRule::class, 'rule_id', 'id');
     }
 
     public function users()
     {
-        return $this->belongsToMany('App\Models\User', 'devices_perms', 'device_id', 'user_id');
+        return $this->belongsToMany(\App\Models\User::class, 'devices_perms', 'device_id', 'user_id');
     }
 }

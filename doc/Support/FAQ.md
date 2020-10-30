@@ -42,6 +42,7 @@ path: blob/master/doc/
 - [My alert templates stopped working](#my-alert-templates-stopped-working)
 - [How do I use trend prediction in graphs](#how-do-i-use-trend-prediction-in-graphs)
 - [How do I move only the DB to another server](#move-db-to-another-server)
+- [What are the "optional requirements message" when I add SNMPv3 devices](#optional-requirements-for-snmpv3-sha2-auth)
 
 # Developing
 
@@ -317,12 +318,11 @@ architecture then the following steps should be all that's needed:
   librenms -u root -p > librenms.sql`)...
 - and import it into your new server (`mysql -u root -p librenms < librenms.sql`).
 - Copy the `rrd/` folder to the new server.
-- Copy the `config.php` file to the new server.
+- Copy the `.env` and `config.php` files to the new server.
 - Check for modified files (eg specific os, ...) with `git status` and 
   migrate them.
 - Ensure ownership of the copied files and folders (substitute your
-  user if necessary) - `chown -R librenms:librenms rrd/; chown
-  librenms:librenms config.php`
+  user if necessary) - `chown -R librenms:librenms /opt/librenms`
 - Delete old pollers on the GUI (gear icon --> Pollers --> Pollers)
 - Validate your installation (/opt/librenms/validate.php)
 - Re-enable cron by uncommenting all lines in `/etc/cron.d/librenms`
@@ -383,14 +383,11 @@ follow the below steps.
 
 ## <a name="faq20"> What information do you need to add a new OS?</a>
 
-Under the device, click the gear and select Capture.
-
-Please [open an issue on
-GitHub](https://github.com/librenms/librenms/issues/new) and provide
+Please [open a feature request in the community forum](https://community.librenms.org/c/feature-requests) and provide
 the output of Discovery, Poller, and Snmpwalk as separate non-expiring
-<https://p.libren.ms/> links.
+<https://p.libren.ms/> links :
 
-You can also use the command line to obtain the information.
+Please use preferably the command line to obtain the information.
 Especially, if snmpwalk results in a large amount of data. Replace the
 relevant information in these commands such as HOSTNAME and
 COMMUNITY. Use `snmpwalk` instead of `snmpbulkwalk` for v1 devices.
@@ -403,9 +400,10 @@ COMMUNITY. Use `snmpwalk` instead of `snmpbulkwalk` for v1 devices.
 snmpbulkwalk -OUneb -v2c -c COMMUNITY HOSTNAME .  | ./pbin.sh
 ```
 
-You can use the links provided by these commands within the issue.
+You can use the links provided by these commands within the community post.
 
-If possible please also provide what the OS name should be if it doesn't exist already.
+If possible please also provide what the OS name should be if it doesn't exist already,
+as well as any useful link (MIBs from vendor, logo, etc etc)
 
 ## <a name="faq9"> What can I do to help?</a>
 
@@ -533,20 +531,11 @@ menu similarly to device types.
 
 If you've changed your database credentials then you will need to
 update LibreNMS with those new details.
-Please edit both `config.php` and `.env`
-
-config.php:
-
-```php
-$config['db_host'] = '';
-$config['db_user'] = '';
-$config['db_pass'] = '';
-$config['db_name'] = '';
-```
+Please edit `.env`
 
 [.env](../Support/Environment-Variables.md#database):
 
-```bash
+```dotenv
 DB_HOST=
 DB_DATABASE=
 DB_USERNAME=
@@ -616,3 +605,5 @@ exit;
 - Edit your `config.php` file to point the install to the new database server location.
 - **Very important**: On your LibreNMS server, inside your install directory is a `.env` file, in it you need to edit the `DBHOST` paramater to point to your new server location. 
 - After all this is done, enable all the cron entries again and start apache.
+## <a name='optional-requirements-for-snmpv3-sha2-auth'>What are the "optional requirements message" when I add SNMPv3 devices?</a>
+When you add a device via the WebUI you may see a little message stating "Optional requirements are not met so some options are disabled". Do not panic. This simply means your system does not contain **openssl >= 1.1** and **net-snmp >= 5.8**, which are the minimum specifications needed to be able to use AES-192,AES-256 as crypto algorithms and SHA-224|256|384|512 as auth algorithms. 

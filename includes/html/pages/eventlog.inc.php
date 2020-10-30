@@ -17,7 +17,7 @@ use App\Models\Device;
 
 $no_refresh = true;
 $param = [];
-if ($device_id = (int)Request::get('device')) {
+if ($device_id = (int) Request::get('device')) {
     $device = Device::find($device_id);
 }
 
@@ -41,20 +41,19 @@ $pagetitle[] = 'Eventlog';
         '<form method="post" action="" class="form-inline" role="form" id="result_form">' +
         '<?php echo csrf_field() ?>' +
         <?php
-        if (!isset($vars['fromdevice'])) {
-        ?>
+        if (! isset($vars['fromdevice'])) {
+            ?>
         '<div class="form-group">' +
         '<label><strong>Device&nbsp;&nbsp;</strong></label>' +
         '<select name="device" id="device" class="form-control">' +
         '<option value="">All Devices</option>' +
-        <?php
-        if ($device instanceof Device) {
-            echo "'<option value=$device->device_id>" . $device->displayName() . "</option>' +";
-        }
-        ?>
+            <?php
+            if ($device instanceof Device) {
+                echo "'<option value=$device->device_id>" . $device->displayName() . "</option>' +";
+            } ?>
         '</select>' +
         '</div>&nbsp;&nbsp;&nbsp;&nbsp;' +
-        <?php
+            <?php
         } else {
             echo "'&nbsp;&nbsp;<input type=\"hidden\" name=\"device\" id=\"device\" value=\"" . $vars['device'] . "\">' + ";
         }
@@ -75,7 +74,7 @@ $pagetitle[] = 'Eventlog';
         '</div>'
     );
 
-    <?php if (!isset($vars['fromdevice'])) { ?>
+    <?php if (! isset($vars['fromdevice'])) { ?>
     $("#device").select2({
         theme: 'bootstrap',
         dropdownAutoWidth : true,

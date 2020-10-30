@@ -4,6 +4,7 @@ namespace App\Models;
 
 use DB;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use LibreNMS\Util\Rewrite;
 use Permissions;
 
@@ -11,6 +12,39 @@ class Port extends DeviceRelatedModel
 {
     public $timestamps = false;
     protected $primaryKey = 'port_id';
+
+    /**
+     * Initialize this class
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (Port $port) {
+            // delete related data
+            $port->adsl()->delete();
+            $port->fdbEntries()->delete();
+            $port->ipv4()->delete();
+            $port->ipv6()->delete();
+            $port->macAccounting()->delete();
+            $port->macs()->delete();
+            $port->nac()->delete();
+            $port->ospfNeighbors()->delete();
+            $port->ospfPorts()->delete();
+            $port->pseudowires()->delete();
+            $port->statistics()->delete();
+            $port->stp()->delete();
+            $port->vlans()->delete();
+
+            // dont have relationships yet
+            DB::table('juniAtmVp')->where('port_id', $port->port_id)->delete();
+            DB::table('ports_perms')->where('port_id', $port->port_id)->delete();
+            DB::table('links')->where('local_port_id', $port->port_id)->orWhere('remote_port_id', $port->port_id)->delete();
+            DB::table('ports_stack')->where('port_id_low', $port->port_id)->orWhere('port_id_high', $port->port_id)->delete();
+
+            \Rrd::purge(optional($port->device)->hostname, \Rrd::portName($port->port_id)); // purge all port rrd files
+        });
+    }
 
     // ---- Helper Functions ----
 
@@ -37,14 +71,14 @@ class Port extends DeviceRelatedModel
             }
         }
 
-        foreach ((array)\LibreNMS\Config::get('rewrite_if', []) as $src => $val) {
-            if (str_i_contains($label, $src)) {
+        foreach ((array) \LibreNMS\Config::get('rewrite_if', []) as $src => $val) {
+            if (Str::contains(strtolower($label), strtolower($src))) {
                 $label = $val;
             }
         }
 
-        foreach ((array)\LibreNMS\Config::get('rewrite_if_regexp', []) as $reg => $val) {
-            $label = preg_replace($reg.'i', $val, $label);
+        foreach ((array) \LibreNMS\Config::get('rewrite_if_regexp', []) as $reg => $val) {
+            $label = preg_replace($reg . 'i', $val, $label);
         }
 
         return $label;
@@ -68,7 +102,7 @@ class Port extends DeviceRelatedModel
      */
     public function canAccess($user)
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -83,9 +117,10 @@ class Port extends DeviceRelatedModel
 
     public function getIfPhysAddressAttribute($mac)
     {
-        if (!empty($mac)) {
+        if (! empty($mac)) {
             return preg_replace('/(..)(..)(..)(..)(..)(..)/', '\\1:\\2:\\3:\\4:\\5:\\6', $mac);
         }
+
         return null;
     }
 
@@ -216,6 +251,11 @@ class Port extends DeviceRelatedModel
 
     // ---- Define Relationships ----
 
+    public function adsl()
+    {
+        return $this->hasMany(PortAdsl::class, 'port_id');
+    }
+
     public function events()
     {
         return $this->morphMany(Eventlog::class, 'events', 'type', 'reference');
@@ -223,22 +263,67 @@ class Port extends DeviceRelatedModel
 
     public function fdbEntries()
     {
-        return $this->hasMany('App\Models\PortsFdb', 'port_id', 'port_id');
+        return $this->hasMany(\App\Models\PortsFdb::class, 'port_id', 'port_id');
+    }
+
+    public function ipv4()
+    {
+        return $this->hasMany(\App\Models\Ipv4Address::class, 'port_id');
+    }
+
+    public function ipv6()
+    {
+        return $this->hasMany(\App\Models\Ipv6Address::class, 'port_id');
+    }
+
+    public function macAccounting()
+    {
+        return $this->hasMany(MacAccounting::class, 'port_id');
+    }
+
+    public function macs()
+    {
+        return $this->hasMany(Ipv4Mac::class, 'port_id');
+    }
+
+    public function nac()
+    {
+        return $this->hasMany(PortsNac::class, 'port_id');
+    }
+
+    public function ospfNeighbors()
+    {
+        return $this->hasMany(OspfNbr::class, 'port_id');
+    }
+
+    public function ospfPorts()
+    {
+        return $this->hasMany(OspfPort::class, 'port_id');
+    }
+
+    public function pseudowires()
+    {
+        return $this->hasMany(Pseudowire::class, 'port_id');
+    }
+
+    public function statistics()
+    {
+        return $this->hasMany(PortStatistic::class, 'port_id');
+    }
+
+    public function stp()
+    {
+        return $this->hasMany(PortStp::class, 'port_id');
     }
 
     public function users()
     {
         // FIXME does not include global read
-        return $this->belongsToMany('App\Models\User', 'ports_perms', 'port_id', 'user_id');
+        return $this->belongsToMany(\App\Models\User::class, 'ports_perms', 'port_id', 'user_id');
     }
 
-    public function ipv4()
+    public function vlans()
     {
-        return $this->hasMany('App\Models\Ipv4Address', 'port_id');
-    }
-
-    public function ipv6()
-    {
-        return $this->hasMany('App\Models\Ipv6Address', 'port_id');
+        return $this->hasMany(PortVlan::class, 'port_id');
     }
 }

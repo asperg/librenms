@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2020 Tony Murray
  * @copyright  2014 Neil Lathwood <https://github.com/laf/ http://www.lathwood.co.uk/fa>
@@ -34,7 +33,7 @@ use Log;
 
 class InfluxDB extends BaseDatastore
 {
-    /** @var \InfluxDB\Database $connection */
+    /** @var \InfluxDB\Database */
     private $connection;
 
     public function __construct(\InfluxDB\Database $influx)
@@ -44,7 +43,7 @@ class InfluxDB extends BaseDatastore
 
         // if the database doesn't exist, create it.
         try {
-            if (!$influx->exists()) {
+            if (! $influx->exists()) {
                 $influx->create();
             }
         } catch (\Exception $e) {
@@ -83,7 +82,6 @@ class InfluxDB extends BaseDatastore
         $tmp_fields = [];
         $tmp_tags['hostname'] = $device['hostname'];
         foreach ($tags as $k => $v) {
-            $v = preg_replace(['/ /', '/,/', '/=/'], ['\ ', '\,', '\='], $v);
             if (empty($v)) {
                 $v = '_blank_';
             }
@@ -101,6 +99,7 @@ class InfluxDB extends BaseDatastore
 
         if (empty($tmp_fields)) {
             Log::warning('All fields empty, skipping update', ['orig_fields' => $fields]);
+
             return;
         }
 
@@ -117,7 +116,7 @@ class InfluxDB extends BaseDatastore
                     null, // the measurement value
                     $tmp_tags,
                     $tmp_fields // optional additional fields
-                )
+                ),
             ];
 
             $this->connection->writePoints($points);
@@ -168,7 +167,7 @@ class InfluxDB extends BaseDatastore
             // If it is an Integer
             if (ctype_digit($data)) {
                 return floatval($data);
-                // Else it is a float
+            // Else it is a float
             } else {
                 return floatval($data);
             }
@@ -180,7 +179,7 @@ class InfluxDB extends BaseDatastore
     /**
      * Checks if the datastore wants rrdtags to be sent when issuing put()
      *
-     * @return boolean
+     * @return bool
      */
     public function wantsRrdTags()
     {

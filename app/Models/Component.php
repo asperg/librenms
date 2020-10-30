@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -29,4 +28,34 @@ class Component extends DeviceRelatedModel
 {
     public $timestamps = false;
     protected $table = 'component';
+    protected $fillable = ['device_id', 'type', 'label', 'status', 'disabled', 'ignore', 'error'];
+
+    // ---- Accessors/Mutators ----
+
+    public function setStatusAttribute($status)
+    {
+        $this->attributes['status'] = (int) $status;
+    }
+
+    public function setDisabledAttribute($disabled)
+    {
+        $this->attributes['disabled'] = (int) $disabled;
+    }
+
+    public function setIgnoreAttribute($ignore)
+    {
+        $this->attributes['ignore'] = (int) $ignore;
+    }
+
+    // ---- Define Relationships ----
+
+    public function logs()
+    {
+        return $this->hasMany(\App\Models\ComponentStatusLog::class, 'component_id', 'id');
+    }
+
+    public function prefs()
+    {
+        return $this->hasMany(\App\Models\ComponentPref::class, 'component', 'id');
+    }
 }
