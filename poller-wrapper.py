@@ -214,7 +214,7 @@ if __name__ == '__main__':
                 print("This system is already joined as the poller master.")
                 sys.exit(2)
             if memc_alive():
-                if memc.get(master_tag) is None:
+                if memc.get(master_tag) is None and 'distributed_poller_nomaster' not in config:
                     print("Registered as Master")
                     memc.set(master_tag, config['distributed_poller_name'], 10)
                     memc.set(nodes_tag, 0, step)
